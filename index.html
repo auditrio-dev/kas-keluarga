@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#18382f">
+<title>Kas Keluarga</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f3;color:#19251f;font:15px Arial,sans-serif}
+header{background:#18382f;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
+h1{font-size:23px;margin:0 0 18px}
+.big{font-size:30px;font-weight:bold;margin:5px 0 18px}
+small{color:#c5d6cc}
+main{max-width:750px;margin:auto;padding:15px}
+nav{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
+nav button{white-space:nowrap;border:0;padding:11px;border-radius:20px;background:#dfe9e2}
+nav button.active,.btn{background:#18382f;color:white}
+.card{background:white;border:1px solid #e2e9e3;border-radius:15px;padding:15px;margin-bottom:13px}
+h2{font-size:18px;margin:0 0 12px}
+.row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #edf0ed}
+.row:last-child{border:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tile{background:#edf4ef;padding:12px;border-radius:11px}
+.tile b{display:block;font-size:18px;margin-top:5px}
+input,select{width:100%;padding:12px;border:1px solid #d5dfd7;border-radius:9px;margin:5px 0 12px;font-size:15px}
+label{font-size:12px;color:#65746a}
+.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:bold;width:100%;margin-top:7px}
+.secondary{background:#e7efe9;color:#18382f}
+.red{color:#b54747}.green{color:#16805d}
+.panel{display:none}.panel.active{display:block}
+.bar{height:8px;background:#e8eee9;border-radius:20px;overflow:hidden;margin-top:5px}
+.fill{height:8px;background:#16805d}
+.muted{color:#68756e;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>Kas Keluarga</h1>
+<small>Estimasi pemasukan bulanan</small>
+<div class="big" id="total">Rp16.800.000</div>
+<div class="grid">
+<div class="tile"><small>Kebutuhan rutin</small><b>Rp8.450.000</b></div>
+<div class="tile"><small>Target tabungan</small><b id="headSave">Rp5.000.000</b></div>
+</div>
+</header>
+<main>
+<nav>
+<button class="active" data-page="home">Ringkasan</button>
+<button data-page="income">Pemasukan</button>
+<button data-page="expense">Pengeluaran</button>
+<button data-page="trans">Transaksi</button>
+<button data-page="sim">Simulasi</button>
+</nav>
+
+<section id="home" class="panel active">
+<div class="card">
+<h2>Ringkasan keuangan</h2>
+<div class="grid">
+<div class="tile"><small>Pemasukan</small><b id="inc"></b></div>
+<div class="tile"><small>Pengeluaran rutin</small><b>Rp8.450.000</b></div>
+<div class="tile"><small>Total alokasi</small><b id="plan"></b></div>
+<div class="tile"><small>Sisa anggaran</small><b id="left"></b></div>
+</div>
+</div>
+<div class="card"><h2>Distribusi anggaran</h2><div id="bars"></div></div>
+<div class="card"><h2>Transaksi terbaru</h2><div id="recent" class="muted">Belum ada transaksi.</div></div>
+</section>
+
+<section id="income" class="panel">
+<div class="card"><h2>Pemasukan bulanan</h2><div id="incomeList"></div><div class="row"><b>Total</b><b>Rp16.800.000</b></div></div>
+<div class="card"><b>Kelas Kamis malam</b><p class="muted">Rencana Rp1.000.000, belum pasti.</p><input type="checkbox" id="kamis"> Aktifkan jika sudah berjalan</div>
+</section>
+
+<section id="expense" class="panel">
+<div class="card"><h2>Pengeluaran rutin</h2><div id="expenseList"></div><div class="row"><b>Total</b><b>Rp8.450.000</b></div></div>
+<div class="card">
+<h2>Atur anggaran</h2>
+<label>Tabungan utama</label><input id="save" type="number" value="5000000">
+<label>Tambahan tabungan</label><input id="extra" type="number" value="850000">
+<label>Jajan keluarga</label><input id="fun" type="number" value="1500000">
+<label>Dana cadangan</label><input id="reserve" type="number" value="1000000">
+<button class="btn" onclick="update()">Simpan anggaran</button>
+</div>
+</section>
+
+<section id="trans" class="panel">
+<div class="card">
+<h2>Catat transaksi</h2>
+<label>Jenis</label>
+<select id="type"><option value="out">Pengeluaran</option><option value="in">Pemasukan</option></select>
+<label>Keterangan</label><input id="desc" placeholder="Contoh: belanja atau honor">
+<label>Nominal rupiah</label><input id="amount" type="number" placeholder="150000">
+<button class="btn" onclick="add()">Simpan transaksi</button>
+</div>
+<div class="card"><h2>Riwayat transaksi</h2><div id="history"></div></div>
+<div class="card">
+<h2>Backup data</h2>
+<button class="btn secondary" onclick="backup()">Unduh backup</button>
+</div>
+</section>
+
+<section id="sim" class="panel">
+<div class="card">
+<h2>Simulasi mengajar</h2>
+<p class="muted">Centang jika tetap mengajar.</p>
+<label><input type="checkbox" id="nurul" checked> Nurul Yaqin Rp1 juta</label>
+<label><input type="checkbox" id="pallangga" checked> Pallangga Rp1 juta</label>
+<label><input type="checkbox" id="kelas" > Kelas Kamis Rp1 juta</label>
+<button class="btn" onclick="simulate()">Hitung skenario</button>
+<h2 id="result" style="margin-top:20px"></h2>
+<div id="resultNote" class="muted"></div>
+</div>
+</section>
+</main>
+<script>
+const incomes=[
+["Tamhid J",1000000],["Tamhid A",1500000],
+["Edukasi S",1000000],["Edukasi R",1000000],
+["Kandea",1000000],["Pondok",500000],
+["GKN",1600000],["MPQ",2000000],["MQJF",2000000],
+["PD",600000],["Nura",1200000],
+["Nurul Yaqin",1000000],["Pallangga",1000000],
+["Sambal Gami",1400000]];
+const expenses=[
+["ART",1300000],["Arisan",400000],
+["SPP Zayn",650000],["SPP Zahier",550000],
+["BPJS",150000],["Listrik Air",350000],
+["Gym",300000],["Belanja",1500000],
+["Dapur",1500000],["Bensin",500000],
+["Kuota",150000],["Langganan",100000],
+["Uang istri",1000000]];
+const rupiah=n=>"Rp"+Math.round(n).toLocaleString("id-ID");
+const total=a=>a.reduce((s,x)=>s+x[1],0);
+const base=total(incomes),fixed=total(expenses);
+let tx=JSON.parse(localStorage.getItem("kasTx")||"[]");
+let budget=JSON.parse(localStorage.getItem("kasBudget")||'{"save":5000000,"extra":850000,"fun":1500000,"reserve":1000000}');
+let active=localStorage.getItem("kasKamis")==="true";
+document.getElementById("kamis").checked=active;
+function plan(){return fixed+budget.save+budget.extra+budget.fun+budget.reserve}
+function income(){return base+(active?1000000:0)}
+function update(){
+["save","extra","fun","reserve"].forEach(k=>budget[k]=Math.max(0,Number(document.getElementById(k).value)||0));
+localStorage.setItem("kasBudget",JSON.stringify(budget));
+render();alert("Anggaran tersimpan.");
+}
+function render(){
+document.getElementById("total").textContent=rupiah(income());
+document.getElementById("headSave").textContent=rupiah(budget.save);
+document.getElementById("inc").textContent=rupiah(income());
+document.getElementById("plan").textContent=rupiah(plan());
+document.getElementById("left").textContent=rupiah(income()-plan());
+document.getElementById("left").className=income()-plan()<0?"red":"green";
+document.getElementById("bars").innerHTML=[
+["Kebutuhan rutin",fixed],["Tabungan utama",budget.save],
+["Tambahan tabungan",budget.extra],["Jajan",budget.fun],
+["Dana cadangan",budget.reserve]
+].map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div><div class="bar"><div class="fill" style="width:${Math.min(100,x[1]/income()*100)}%"></div></div>`).join("");
+document.getElementById("incomeList").innerHTML=incomes.map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div>`).join("");
+document.getElementById("expenseList").innerHTML=expenses.map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div>`).join("");
+["save","extra","fun","reserve"].forEach(k=>document.getElementById(k).value=budget[k]);
+document.getElementById("recent").innerHTML=tx.slice(-5).reverse().map(t=>`<div class="row">${t.desc}<b>${t.type==="in"?"+":"-"}${rupiah(t.amount)}</b></div>`).join("")||"Belum ada transaksi.";
+document.getElementById("history").innerHTML=tx.slice().reverse().map(t=>`<div class="row">${t.desc}<b class="${t.type==="in"?"green":"red"}">${t.type==="in"?"+":"-"}${rupiah(t.amount)}</b></div>`).join("")||"Belum ada transaksi.";
+}
+function add(){
+let d=document.getElementById("desc").value.trim(),a=Number(document.getElementById("amount").value);
+if(!d||a<=0)return alert("Isi keterangan dan nominal.");
+tx.push({desc:d,amount:a,type:document.getElementById("type").value,date:new Date().toISOString()});
+localStorage.setItem("kasTx",JSON.stringify(tx));
+document.getElementById("desc").value="";document.getElementById("amount").value="";
+render();alert("Transaksi disimpan di perangkat ini.");
+}
+function simulate(){
+let n=base-(document.getElementById("nurul").checked?0:1000000)-(document.getElementById("pallangga").checked?0:1000000)+(document.getElementById("kelas").checked?1000000:0);
+document.getElementById("result").textContent=rupiah(n);
+document.getElementById("resultNote").textContent="Sisa setelah seluruh alokasi: "+rupiah(n-plan());
+}
+function backup(){
+let blob=new Blob([JSON.stringify({tx,budget},null,2)],{type:"application/json"});
+let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backup-kas-keluarga.json";a.click();
+}
+document.getElementById("kamis").onchange=e=>{active=e.target.checked;localStorage.setItem("kasKamis",active);render()};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("nav button,.panel").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");document.getElementById(b.dataset.page).classList.add("active");
+});
+render();
+</script>
+</body>
+</html>
