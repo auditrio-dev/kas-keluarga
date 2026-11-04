@@ -1,191 +1,52 @@
-
 <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#18382f">
-<title>Kas Keluarga</title>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#18382f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><title>Kas Keluarga</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f6f3;color:#19251f;font:15px Arial,sans-serif}
-header{background:#18382f;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
-h1{font-size:23px;margin:0 0 18px}
-.big{font-size:30px;font-weight:bold;margin:5px 0 18px}
-small{color:#c5d6cc}
-main{max-width:750px;margin:auto;padding:15px}
-nav{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
-nav button{white-space:nowrap;border:0;padding:11px;border-radius:20px;background:#dfe9e2}
-nav button.active,.btn{background:#18382f;color:white}
-.card{background:white;border:1px solid #e2e9e3;border-radius:15px;padding:15px;margin-bottom:13px}
-h2{font-size:18px;margin:0 0 12px}
-.row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #edf0ed}
-.row:last-child{border:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.tile{background:#edf4ef;padding:12px;border-radius:11px}
-.tile b{display:block;font-size:18px;margin-top:5px}
-input,select{width:100%;padding:12px;border:1px solid #d5dfd7;border-radius:9px;margin:5px 0 12px;font-size:15px}
-label{font-size:12px;color:#65746a}
-.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:bold;width:100%;margin-top:7px}
-.secondary{background:#e7efe9;color:#18382f}
-.red{color:#b54747}.green{color:#16805d}
-.panel{display:none}.panel.active{display:block}
-.bar{height:8px;background:#e8eee9;border-radius:20px;overflow:hidden;margin-top:5px}
-.fill{height:8px;background:#16805d}
-.muted{color:#68756e;font-size:12px}
-</style>
-</head>
-<body>
-<header>
-<h1>Kas Keluarga</h1>
-<small>Estimasi pemasukan bulanan</small>
-<div class="big" id="total">Rp16.800.000</div>
-<div class="grid">
-<div class="tile"><small>Kebutuhan rutin</small><b>Rp8.450.000</b></div>
-<div class="tile"><small>Target tabungan</small><b id="headSave">Rp5.000.000</b></div>
-</div>
-</header>
-<main>
-<nav>
-<button class="active" data-page="home">Ringkasan</button>
-<button data-page="income">Pemasukan</button>
-<button data-page="expense">Pengeluaran</button>
-<button data-page="trans">Transaksi</button>
-<button data-page="sim">Simulasi</button>
-</nav>
-
-<section id="home" class="panel active">
-<div class="card">
-<h2>Ringkasan keuangan</h2>
-<div class="grid">
-<div class="tile"><small>Pemasukan</small><b id="inc"></b></div>
-<div class="tile"><small>Pengeluaran rutin</small><b>Rp8.450.000</b></div>
-<div class="tile"><small>Total alokasi</small><b id="plan"></b></div>
-<div class="tile"><small>Sisa anggaran</small><b id="left"></b></div>
-</div>
-</div>
-<div class="card"><h2>Distribusi anggaran</h2><div id="bars"></div></div>
-<div class="card"><h2>Transaksi terbaru</h2><div id="recent" class="muted">Belum ada transaksi.</div></div>
-</section>
-
-<section id="income" class="panel">
-<div class="card"><h2>Pemasukan bulanan</h2><div id="incomeList"></div><div class="row"><b>Total</b><b>Rp16.800.000</b></div></div>
-<div class="card"><b>Kelas Kamis malam</b><p class="muted">Rencana Rp1.000.000, belum pasti.</p><input type="checkbox" id="kamis"> Aktifkan jika sudah berjalan</div>
-</section>
-
-<section id="expense" class="panel">
-<div class="card"><h2>Pengeluaran rutin</h2><div id="expenseList"></div><div class="row"><b>Total</b><b>Rp8.450.000</b></div></div>
-<div class="card">
-<h2>Atur anggaran</h2>
-<label>Tabungan utama</label><input id="save" type="number" value="5000000">
-<label>Tambahan tabungan</label><input id="extra" type="number" value="850000">
-<label>Jajan keluarga</label><input id="fun" type="number" value="1500000">
-<label>Dana cadangan</label><input id="reserve" type="number" value="1000000">
-<button class="btn" onclick="update()">Simpan anggaran</button>
-</div>
-</section>
-
-<section id="trans" class="panel">
-<div class="card">
-<h2>Catat transaksi</h2>
-<label>Jenis</label>
-<select id="type"><option value="out">Pengeluaran</option><option value="in">Pemasukan</option></select>
-<label>Keterangan</label><input id="desc" placeholder="Contoh: belanja atau honor">
-<label>Nominal rupiah</label><input id="amount" type="number" placeholder="150000">
-<button class="btn" onclick="add()">Simpan transaksi</button>
-</div>
-<div class="card"><h2>Riwayat transaksi</h2><div id="history"></div></div>
-<div class="card">
-<h2>Backup data</h2>
-<button class="btn secondary" onclick="backup()">Unduh backup</button>
-</div>
-</section>
-
-<section id="sim" class="panel">
-<div class="card">
-<h2>Simulasi mengajar</h2>
-<p class="muted">Centang jika tetap mengajar.</p>
-<label><input type="checkbox" id="nurul" checked> Nurul Yaqin Rp1 juta</label>
-<label><input type="checkbox" id="pallangga" checked> Pallangga Rp1 juta</label>
-<label><input type="checkbox" id="kelas" > Kelas Kamis Rp1 juta</label>
-<button class="btn" onclick="simulate()">Hitung skenario</button>
-<h2 id="result" style="margin-top:20px"></h2>
-<div id="resultNote" class="muted"></div>
-</div>
-</section>
+:root{--dark:#18382f;--bg:#f3f6f3;--muted:#68756e;--line:#e2e9e3;--green:#16805d;--red:#b54747}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#19251f;font:15px -apple-system,BlinkMacSystemFont,Arial,sans-serif}header{background:var(--dark);color:#fff;padding:25px 18px 22px;border-radius:0 0 22px 22px}h1{font-size:24px;margin:0 0 16px}.big{font-size:30px;font-weight:800;margin:5px 0 18px}.muted,small{color:var(--muted)}header small{color:#c5d6cc}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tile{background:#edf4ef;padding:12px;border-radius:12px;color:#18382f}.tile small{color:#728078}.tile b{display:block;font-size:18px;margin-top:5px}main{max-width:760px;margin:auto;padding:14px 14px 40px}nav{display:flex;gap:7px;overflow:auto;margin-bottom:14px;padding:2px 0 8px;scrollbar-width:none}nav button{white-space:nowrap;border:0;padding:12px 16px;border-radius:22px;background:#dfe9e2;color:#1680df;font-size:15px}nav button.active,.btn{background:var(--dark);color:white}.panel{display:none}.panel.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:13px}h2{font-size:19px;margin:0 0 13px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf0ed}.row:last-child{border:0}.row b{text-align:right}.bar{height:8px;background:#e8eee9;border-radius:20px;overflow:hidden;margin:0 0 8px}.fill{height:8px;background:var(--green)}label{display:block;font-size:13px;color:#65746a;margin:8px 0 4px}input,select{width:100%;padding:12px;border:1px solid #d5dfd7;border-radius:10px;margin:4px 0 10px;font-size:16px;background:#fff;color:#19251f}input[type=checkbox]{width:auto;margin-right:7px;transform:scale(1.15)}.btn{border:0;border-radius:11px;padding:13px 15px;font-weight:700;width:100%;margin-top:7px;font-size:15px}.secondary{background:#e7efe9;color:#18382f}.danger{background:#fff0ef;color:#a53d3d}.green{color:var(--green)}.red{color:var(--red)}.muted{font-size:12px;line-height:1.5}.stat{font-size:21px;font-weight:800}.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{display:inline-block;background:#eaf2ec;border-radius:20px;padding:5px 9px;font-size:12px;color:#34594a}.notice{background:#f0f6f1;border:1px solid #dce9df;padding:12px;border-radius:12px;font-size:13px;line-height:1.5;margin:8px 0}.file{display:none}.editline{display:grid;grid-template-columns:1fr 118px 34px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid #edf0ed}.editline input{margin:0;padding:9px 7px;font-size:14px;min-width:0}.editline .name{font-size:14px;overflow-wrap:anywhere}.iconbtn{border:0;border-radius:8px;background:#fff0ef;color:#a53d3d;height:36px;font-size:18px}.budget-total{font-weight:700;padding:10px 0}.inlineform{display:grid;grid-template-columns:1fr 120px;gap:7px}.inlineform input{margin-bottom:5px}.txitem{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.txmeta{font-size:12px;color:#748078;margin-top:4px}.empty{padding:12px 0;color:#748078}.sticky{position:sticky;top:0;background:var(--bg);padding-top:3px;z-index:2}@media(min-width:600px){header{padding-left:max(18px,calc((100% - 720px)/2));padding-right:max(18px,calc((100% - 720px)/2))}}
+</style></head><body>
+<header><h1>Kas Keluarga</h1><small>Estimasi pemasukan bulanan</small><div class="big" id="totalIncome"></div><div class="grid"><div class="tile"><small>Kebutuhan rutin</small><b id="headFixed"></b></div><div class="tile"><small>Target tabungan</small><b id="headSave"></b></div></div></header>
+<main><nav id="nav"><button class="active" data-page="home">Ringkasan</button><button data-page="income">Pemasukan</button><button data-page="expense">Anggaran</button><button data-page="trans">Transaksi</button><button data-page="sim">Simulasi</button><button data-page="import">Import Excel</button></nav>
+<section id="home" class="panel active"><div class="card"><h2>Ringkasan keuangan</h2><div class="grid"><div class="tile"><small>Pemasukan bulanan</small><b id="sumIncome"></b></div><div class="tile"><small>Kebutuhan rutin</small><b id="sumFixed"></b></div><div class="tile"><small>Total alokasi</small><b id="sumPlan"></b></div><div class="tile"><small>Sisa anggaran</small><b id="sumLeft"></b></div></div></div><div class="card"><h2>Distribusi anggaran</h2><div id="bars"></div></div><div class="card"><h2>Ringkasan transaksi bulan ini</h2><div class="grid"><div class="tile"><small>Pemasukan aktual</small><b id="monthIn"></b></div><div class="tile"><small>Pengeluaran aktual</small><b id="monthOut"></b></div></div><div class="row"><span>Saldo bersih bulan ini</span><b id="monthNet"></b></div></div><div class="card"><h2>Transaksi terbaru</h2><div id="recent"></div></div></section>
+<section id="income" class="panel"><div class="card"><h2>Daftar pemasukan bulanan</h2><div id="incomeList"></div><div class="row"><b>Total pemasukan</b><b id="incomeTotal"></b></div><div class="notice">Kelas Kamis malam belum dimasukkan karena belum berjalan.</div></div></section>
+<section id="expense" class="panel"><div class="card"><h2>Edit kebutuhan rutin</h2><p class="muted">Ubah nominal setiap pos, atau hapus pos yang tidak digunakan. Perubahan tersimpan di perangkat ini.</p><div id="expenseList"></div><div class="row"><b>Total kebutuhan rutin</b><b id="expenseTotal"></b></div><h2 style="margin-top:16px">Tambah pos pengeluaran</h2><div class="inlineform"><input id="newExpenseName" placeholder="Nama pos"><input id="newExpenseAmount" type="number" min="0" placeholder="Nominal"></div><button class="btn secondary" id="addExpense">Tambah pos</button></div><div class="card"><h2>Atur alokasi bulanan</h2><label>Tabungan utama</label><input id="save" type="number" min="0"><label>Tambahan tabungan</label><input id="extra" type="number" min="0"><label>Jajan keluarga</label><input id="fun" type="number" min="0"><label>Dana cadangan</label><input id="reserve" type="number" min="0"><button class="btn" id="saveBudget">Simpan anggaran</button></div></section>
+<section id="trans" class="panel"><div class="card"><h2>Catat transaksi</h2><label>Tanggal transaksi</label><input id="txDate" type="date"><label>Jenis</label><select id="txType"><option value="out">Pengeluaran</option><option value="in">Pemasukan</option></select><label>Pos / kategori</label><input id="txCategory" placeholder="Contoh: Dapur, Tamhid J"><label>Keterangan</label><input id="txDesc" placeholder="Contoh: belanja atau honor"><label>Nominal rupiah</label><input id="txAmount" type="number" min="1" inputmode="numeric" placeholder="150000"><button class="btn" id="addTx">Simpan transaksi</button></div><div class="card"><h2>Riwayat transaksi</h2><label>Filter bulan</label><input type="month" id="filterMonth"><div class="row"><span>Jumlah transaksi</span><b id="txCount">0</b></div><div id="history"></div></div><div class="card"><h2>Backup data</h2><button class="btn secondary" id="backup">Unduh backup JSON</button></div></section>
+<section id="sim" class="panel"><div class="card"><h2>Simulasi mengajar</h2><p class="muted">Centang sumber pemasukan yang tetap berjalan. Kondisi saat ini: Nurul Yaqin dan Pallangga tetap mengajar, kelas Kamis tidak berjalan.</p><label><input type="checkbox" id="nurul" checked> Nurul Yaqin Rp1 juta</label><label><input type="checkbox" id="pallangga" checked> Pallangga Rp1 juta</label><label><input type="checkbox" id="kamis"> Kelas Kamis Rp1 juta</label><button class="btn" id="simulate">Hitung skenario</button><h2 id="simResult" style="margin-top:18px"></h2><div id="simNote" class="muted"></div></div></section>
+<section id="import" class="panel"><div class="card"><h2>Import spreadsheet Excel</h2><p class="muted">Pilih file Excel (.xlsx) yang berisi sheet Ringkasan, Pemasukan, Pengeluaran, dan Transaksi. Aplikasi akan menampilkan pratinjau sebelum menyimpan.</p><label>Pilih file Excel</label><input type="file" id="excelFile" accept=".xlsx,.xls"><div class="notice">Import akan memperbarui daftar pemasukan dan anggaran. Transaksi Excel akan digabung dengan transaksi yang sudah ada. Data ganda berdasarkan tanggal, jenis, pos, keterangan, dan nominal tidak akan ditambahkan lagi.</div><button class="btn" id="previewImport">Baca & pratinjau Excel</button><div id="importPreview"></div><button class="btn secondary" id="confirmImport" style="display:none">Konfirmasi impor dan simpan</button></div></section>
 </main>
-<script>
-const incomes=[
-["Tamhid J",1000000],["Tamhid A",1500000],
-["Edukasi S",1000000],["Edukasi R",1000000],
-["Kandea",1000000],["Pondok",500000],
-["GKN",1600000],["MPQ",2000000],["MQJF",2000000],
-["PD",600000],["Nura",1200000],
-["Nurul Yaqin",1000000],["Pallangga",1000000],
-["Sambal Gami",1400000]];
-const expenses=[
-["ART",1300000],["Arisan",400000],
-["SPP Zayn",650000],["SPP Zahier",550000],
-["BPJS",150000],["Listrik Air",350000],
-["Gym",300000],["Belanja",1500000],
-["Dapur",1500000],["Bensin",500000],
-["Kuota",150000],["Langganan",100000],
-["Uang istri",1000000]];
-const rupiah=n=>"Rp"+Math.round(n).toLocaleString("id-ID");
-const total=a=>a.reduce((s,x)=>s+x[1],0);
-const base=total(incomes),fixed=total(expenses);
-let tx=JSON.parse(localStorage.getItem("kasTx")||"[]");
-let budget=JSON.parse(localStorage.getItem("kasBudget")||'{"save":5000000,"extra":850000,"fun":1500000,"reserve":1000000}');
-let active=localStorage.getItem("kasKamis")==="true";
-document.getElementById("kamis").checked=active;
-function plan(){return fixed+budget.save+budget.extra+budget.fun+budget.reserve}
-function income(){return base+(active?1000000:0)}
-function update(){
-["save","extra","fun","reserve"].forEach(k=>budget[k]=Math.max(0,Number(document.getElementById(k).value)||0));
-localStorage.setItem("kasBudget",JSON.stringify(budget));
-render();alert("Anggaran tersimpan.");
-}
-function render(){
-document.getElementById("total").textContent=rupiah(income());
-document.getElementById("headSave").textContent=rupiah(budget.save);
-document.getElementById("inc").textContent=rupiah(income());
-document.getElementById("plan").textContent=rupiah(plan());
-document.getElementById("left").textContent=rupiah(income()-plan());
-document.getElementById("left").className=income()-plan()<0?"red":"green";
-document.getElementById("bars").innerHTML=[
-["Kebutuhan rutin",fixed],["Tabungan utama",budget.save],
-["Tambahan tabungan",budget.extra],["Jajan",budget.fun],
-["Dana cadangan",budget.reserve]
-].map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div><div class="bar"><div class="fill" style="width:${Math.min(100,x[1]/income()*100)}%"></div></div>`).join("");
-document.getElementById("incomeList").innerHTML=incomes.map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div>`).join("");
-document.getElementById("expenseList").innerHTML=expenses.map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div>`).join("");
-["save","extra","fun","reserve"].forEach(k=>document.getElementById(k).value=budget[k]);
-document.getElementById("recent").innerHTML=tx.slice(-5).reverse().map(t=>`<div class="row">${t.desc}<b>${t.type==="in"?"+":"-"}${rupiah(t.amount)}</b></div>`).join("")||"Belum ada transaksi.";
-document.getElementById("history").innerHTML=tx.slice().reverse().map(t=>`<div class="row">${t.desc}<b class="${t.type==="in"?"green":"red"}">${t.type==="in"?"+":"-"}${rupiah(t.amount)}</b></div>`).join("")||"Belum ada transaksi.";
-}
-function add(){
-let d=document.getElementById("desc").value.trim(),a=Number(document.getElementById("amount").value);
-if(!d||a<=0)return alert("Isi keterangan dan nominal.");
-tx.push({desc:d,amount:a,type:document.getElementById("type").value,date:new Date().toISOString()});
-localStorage.setItem("kasTx",JSON.stringify(tx));
-document.getElementById("desc").value="";document.getElementById("amount").value="";
-render();alert("Transaksi disimpan di perangkat ini.");
-}
-function simulate(){
-let n=base-(document.getElementById("nurul").checked?0:1000000)-(document.getElementById("pallangga").checked?0:1000000)+(document.getElementById("kelas").checked?1000000:0);
-document.getElementById("result").textContent=rupiah(n);
-document.getElementById("resultNote").textContent="Sisa setelah seluruh alokasi: "+rupiah(n-plan());
-}
-function backup(){
-let blob=new Blob([JSON.stringify({tx,budget},null,2)],{type:"application/json"});
-let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backup-kas-keluarga.json";a.click();
-}
-document.getElementById("kamis").onchange=e=>{active=e.target.checked;localStorage.setItem("kasKamis",active);render()};
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
-document.querySelectorAll("nav button,.panel").forEach(x=>x.classList.remove("active"));
-b.classList.add("active");document.getElementById(b.dataset.page).classList.add("active");
-});
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script>
+const SEED={"incomes":[{"name":"Tamhid J","amount":1000000},{"name":"Tamhid A","amount":1500000},{"name":"Edukasi S","amount":1000000},{"name":"Edukasi R","amount":1250000},{"name":"Kandea","amount":1000000},{"name":"Pondok","amount":500000},{"name":"GKN","amount":1800000},{"name":"MPQ","amount":2000000},{"name":"MQJF","amount":2000000},{"name":"PD","amount":600000},{"name":"Nura","amount":1200000},{"name":"Nurul Yaqin","amount":1000000},{"name":"Pallangga","amount":1000000},{"name":"Sambal Gami","amount":1400000}],"expenses":[{"name":"ART","amount":1300000},{"name":"Arisan","amount":400000},{"name":"SPP Zayn","amount":650000},{"name":"SPP Zahier","amount":550000},{"name":"BPJS","amount":150000},{"name":"Listrik dan air","amount":350000},{"name":"Gym","amount":300000},{"name":"Belanja","amount":1500000},{"name":"Dapur","amount":1500000},{"name":"Motor","amount":500000},{"name":"Kuota","amount":150000},{"name":"Langganan","amount":100000},{"name":"Uang istri","amount":1000000}],"budget":{"save":5000000,"fun":1500000,"reserve":1000000,"extra":550000},"transactions":[{"id":"excel-5","date":"2026-10-25","type":"in","category":"Pondok","desc":"Pondok","amount":500000,"source":"excel"},{"id":"excel-6","date":"2026-10-26","type":"in","category":"Tamhid A","desc":"Tamhid A","amount":1750000,"source":"excel"},{"id":"excel-7","date":"2026-10-26","type":"out","category":"Jajan keluarga","desc":"Obat","amount":174000,"source":"excel"},{"id":"excel-8","date":"2026-10-27","type":"in","category":"Nura","desc":"Nura","amount":300000,"source":"excel"},{"id":"excel-9","date":"2026-10-27","type":"out","category":"Jajan keluarga","desc":"Kopi","amount":30000,"source":"excel"},{"id":"excel-10","date":"2026-10-27","type":"out","category":"Bensin","desc":"Bensin","amount":78000,"source":"excel"},{"id":"excel-11","date":"2026-10-27","type":"out","category":"Lain-lain","desc":"Servis","amount":115000,"source":"excel"},{"id":"excel-12","date":"2026-10-27","type":"out","category":"Lain-lain","desc":"Helm","amount":340000,"source":"excel"},{"id":"excel-13","date":"2026-10-27","type":"out","category":"Dapur","desc":"Lauk","amount":255000,"source":"excel"},{"id":"excel-14","date":"2026-10-27","type":"out","category":"Lain-lain","desc":"Tabungan Zahier","amount":500000,"source":"excel"},{"id":"excel-15","date":"2026-10-28","type":"out","category":"Dapur","desc":"Ayam 2 kg","amount":125000,"source":"excel"},{"id":"excel-16","date":"2026-10-28","type":"out","category":"Dapur","desc":"Sayur","amount":50000,"source":"excel"},{"id":"excel-17","date":"2026-10-28","type":"out","category":"Jajan keluarga","desc":"Kopi","amount":30000,"source":"excel"},{"id":"excel-18","date":"2026-10-28","type":"in","category":"Nurul Yaqin","desc":"Nurul Yaqin","amount":250000,"source":"excel"},{"id":"excel-19","date":"2026-10-29","type":"in","category":"Sambal Gami","desc":"Sambal Gami","amount":350000,"source":"excel"},{"id":"excel-20","date":"2026-10-29","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":75000,"source":"excel"},{"id":"excel-21","date":"2026-10-29","type":"out","category":"Bensin","desc":"Bensin","amount":70000,"source":"excel"},{"id":"excel-22","date":"2026-10-30","type":"in","category":"GKN","desc":"GKN","amount":1800000,"source":"excel"},{"id":"excel-23","date":"2026-10-30","type":"in","category":"Edukasi R","desc":"Edukasi R","amount":1250000,"source":"excel"},{"id":"excel-24","date":"2026-10-30","type":"out","category":"Jajan keluarga","desc":"Kopi","amount":34000,"source":"excel"},{"id":"excel-25","date":"2026-10-30","type":"out","category":"Jajan keluarga","desc":"Takziyah","amount":50000,"source":"excel"},{"id":"excel-26","date":"2026-10-30","type":"in","category":"PD","desc":"PD","amount":150000,"source":"excel"},{"id":"excel-27","date":"2026-10-30","type":"out","category":"Jajan keluarga","desc":"Jersey Zayn","amount":150000,"source":"excel"},{"id":"excel-28","date":"2026-10-30","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":48000,"source":"excel"},{"id":"excel-29","date":"2026-10-31","type":"out","category":"Jajan keluarga","desc":"Kopi","amount":60000,"source":"excel"},{"id":"excel-30","date":"2026-10-31","type":"in","category":"Edukasi S","desc":"Edukasi S","amount":1000000,"source":"excel"},{"id":"excel-32","date":"2026-11-01","type":"out","category":"SPP Zayn","desc":"SPP Zayn","amount":650000,"source":"excel"},{"id":"excel-33","date":"2026-11-01","type":"out","category":"SPP Zahier","desc":"SPP Zahier","amount":550000,"source":"excel"},{"id":"excel-34","date":"2026-11-01","type":"out","category":"BPJS","desc":"BPJS","amount":140000,"source":"excel"},{"id":"excel-35","date":"2026-11-01","type":"out","category":"Langganan","desc":"Langganan","amount":100000,"source":"excel"},{"id":"excel-36","date":"2026-11-01","type":"out","category":"Listrik dan air","desc":"Listrik dan air","amount":320000,"source":"excel"},{"id":"excel-37","date":"2026-11-01","type":"in","category":"Kandea","desc":"Kandea","amount":1000000,"source":"excel"},{"id":"excel-38","date":"2026-11-01","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":27000,"source":"excel"},{"id":"excel-39","date":"2026-11-01","type":"out","category":"Dapur","desc":"Dapur","amount":50000,"source":"excel"},{"id":"excel-40","date":"2026-11-02","type":"in","category":"Pallangga","desc":"Pallangga","amount":250000,"source":"excel"},{"id":"excel-41","date":"2026-11-02","type":"out","category":"Arisan","desc":"Arisan","amount":400000,"source":"excel"},{"id":"excel-42","date":"2026-11-02","type":"out","category":"Belanja","desc":"Belanja","amount":1400000,"source":"excel"},{"id":"excel-43","date":"2026-11-02","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":150000,"source":"excel"},{"id":"excel-44","date":"2026-11-02","type":"out","category":"Kuota","desc":"Kuota","amount":150000,"source":"excel"},{"id":"excel-45","date":"2026-11-02","type":"out","category":"Dapur","desc":"Dapur","amount":75000,"source":"excel"},{"id":"excel-46","date":"2026-11-02","type":"out","category":"ART","desc":"ART","amount":1150000,"source":"excel"},{"id":"excel-47","date":"2026-11-02","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":45000,"source":"excel"},{"id":"excel-48","date":"2026-11-02","type":"out","category":"Bensin","desc":"Bensin","amount":72000,"source":"excel"},{"id":"excel-49","date":"2026-11-02","type":"in","category":"Nura","desc":"Nura","amount":300000,"source":"excel"},{"id":"excel-50","date":"2026-11-03","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":21000,"source":"excel"},{"id":"excel-51","date":"2026-11-03","type":"out","category":"Lain-lain","desc":"Outing Zayn","amount":210000,"source":"excel"},{"id":"excel-52","date":"2026-11-04","type":"out","category":"Dapur","desc":"Dapur","amount":50000,"source":"excel"},{"id":"excel-53","date":"2026-11-04","type":"out","category":"Jajan keluarga","desc":"Jajan keluarga","amount":21000,"source":"excel"}]};
+const rupiah=n=>'Rp'+Math.round(Number(n)||0).toLocaleString('id-ID');
+const sum=a=>a.reduce((s,x)=>s+(Number(x.amount)||0),0);
+const today=()=>{let d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+let incomes=JSON.parse(localStorage.getItem('kk_incomes')||'null')||SEED.incomes;
+let expenses=JSON.parse(localStorage.getItem('kk_expenses')||'null')||SEED.expenses;
+let budget=JSON.parse(localStorage.getItem('kk_budget')||'null')||SEED.budget;
+let tx=JSON.parse(localStorage.getItem('kk_transactions')||'null');
+if(!tx){tx=SEED.transactions.slice();localStorage.setItem('kk_transactions',JSON.stringify(tx));}
+else { // merge spreadsheet seed into existing device transactions without duplicating exact records
+ const keys=new Set(tx.map(keyTx)); SEED.transactions.forEach(t=>{let k=keyTx(t);if(!keys.has(k)){tx.push(t);keys.add(k)}});localStorage.setItem('kk_transactions',JSON.stringify(tx));}
+let pending=null;
+function keyTx(t){return [t.date||'',t.type||'',(t.category||'').trim().toLowerCase(),(t.desc||'').trim().toLowerCase(),Number(t.amount)||0].join('|')}
+function saveAll(){localStorage.setItem('kk_incomes',JSON.stringify(incomes));localStorage.setItem('kk_expenses',JSON.stringify(expenses));localStorage.setItem('kk_budget',JSON.stringify(budget));localStorage.setItem('kk_transactions',JSON.stringify(tx));}
+function fixed(){return sum(expenses)} function totalIncome(){return sum(incomes)} function plan(){return fixed()+Object.values(budget).reduce((a,b)=>a+(Number(b)||0),0)}
+function monthTx(){let m=document.getElementById('filterMonth')?.value||today().slice(0,7);return tx.filter(t=>(t.date||'').slice(0,7)===m)}
+function render(){let inc=totalIncome(),f=fixed(),p=plan(),left=inc-p;document.getElementById('totalIncome').textContent=rupiah(inc);document.getElementById('headFixed').textContent=rupiah(f);document.getElementById('headSave').textContent=rupiah(budget.save);document.getElementById('sumIncome').textContent=rupiah(inc);document.getElementById('sumFixed').textContent=rupiah(f);document.getElementById('sumPlan').textContent=rupiah(p);document.getElementById('sumLeft').textContent=rupiah(left);document.getElementById('sumLeft').className=left<0?'red':'';
+let bars=[['Kebutuhan rutin',f],['Tabungan utama',budget.save],['Tambahan tabungan',budget.extra],['Jajan keluarga',budget.fun],['Dana cadangan',budget.reserve]];document.getElementById('bars').innerHTML=bars.map(x=>`<div class="row"><span>${x[0]}</span><b>${rupiah(x[1])}</b></div><div class="bar"><div class="fill" style="width:${inc?Math.min(100,x[1]/inc*100):0}%"></div></div>`).join('');
+document.getElementById('incomeList').innerHTML=incomes.map(x=>`<div class="row"><span>${esc(x.name)}</span><b>${rupiah(x.amount)}</b></div>`).join('');document.getElementById('incomeTotal').textContent=rupiah(inc);document.getElementById('expenseList').innerHTML=expenses.map((x,i)=>`<div class="editline"><span class="name">${esc(x.name)}</span><input type="number" min="0" inputmode="numeric" aria-label="Nominal ${esc(x.name)}" data-expense-index="${i}" value="${Number(x.amount)||0}"><button class="iconbtn" type="button" data-delete-expense="${i}" aria-label="Hapus ${esc(x.name)}">×</button></div>`).join('');document.getElementById('expenseTotal').textContent=rupiah(f);
+['save','extra','fun','reserve'].forEach(k=>document.getElementById(k).value=budget[k]);let m=monthTx(),mi=sum(m.filter(t=>t.type==='in')),mo=sum(m.filter(t=>t.type==='out'));document.getElementById('monthIn').textContent=rupiah(mi);document.getElementById('monthOut').textContent=rupiah(mo);document.getElementById('monthNet').textContent=rupiah(mi-mo);document.getElementById('monthNet').className=mi-mo<0?'red':'green';document.getElementById('recent').innerHTML=tx.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5).map(txHtml).join('')||'<div class="empty">Belum ada transaksi.</div>';renderHistory();}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function txHtml(t){return `<div class="row txitem"><div><b>${esc(t.desc||t.category||'Transaksi')}</b><div class="txmeta">${esc(t.date||'Tanpa tanggal')} · ${esc(t.category||'')}</div></div><b class="${t.type==='in'?'green':'red'}">${t.type==='in'?'+':'−'}${rupiah(t.amount)}</b></div>`}
+function renderHistory(){let m=monthTx();document.getElementById('txCount').textContent=m.length;document.getElementById('history').innerHTML=m.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(txHtml).join('')||'<div class="empty">Belum ada transaksi pada bulan ini.</div>'}
+document.getElementById('txDate').value=today();document.getElementById('filterMonth').value=today().slice(0,7);document.getElementById('filterMonth').addEventListener('change',renderHistory);
+document.getElementById('saveBudget').onclick=()=>{['save','extra','fun','reserve'].forEach(k=>budget[k]=Math.max(0,Number(document.getElementById(k).value)||0));saveAll();render();alert('Anggaran tersimpan.');};
+document.getElementById('expenseList').addEventListener('change',e=>{let i=e.target.dataset.expenseIndex;if(i===undefined)return;expenses[Number(i)].amount=Math.max(0,Number(e.target.value)||0);saveAll();render();});
+document.getElementById('expenseList').addEventListener('click',e=>{let i=e.target.dataset.deleteExpense;if(i===undefined)return;let item=expenses[Number(i)];if(!confirm('Hapus pos '+item.name+' dari anggaran rutin?'))return;expenses.splice(Number(i),1);saveAll();render();});
+document.getElementById('addExpense').onclick=()=>{let name=document.getElementById('newExpenseName').value.trim(),amount=Number(document.getElementById('newExpenseAmount').value);if(!name||amount<0||document.getElementById('newExpenseAmount').value===''){alert('Isi nama pos dan nominal dengan benar.');return;}expenses.push({name,amount});saveAll();document.getElementById('newExpenseName').value='';document.getElementById('newExpenseAmount').value='';render();alert('Pos pengeluaran ditambahkan.');};
+document.getElementById('addTx').onclick=()=>{let date=document.getElementById('txDate').value,type=document.getElementById('txType').value,category=document.getElementById('txCategory').value.trim(),desc=document.getElementById('txDesc').value.trim(),amount=Number(document.getElementById('txAmount').value);if(!date||!amount||amount<=0||(!category&&!desc)){alert('Isi tanggal, pos atau keterangan, dan nominal dengan benar.');return;}let t={id:'manual-'+Date.now(),date,type,category,desc:desc||category,amount,source:'manual'};tx.push(t);saveAll();document.getElementById('txCategory').value='';document.getElementById('txDesc').value='';document.getElementById('txAmount').value='';render();alert('Transaksi tersimpan.');};
+document.getElementById('backup').onclick=()=>{let blob=new Blob([JSON.stringify({incomes,expenses,budget,transactions:tx},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-kas-keluarga.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)};
+document.getElementById('simulate').onclick=()=>{let n=totalIncome()-(document.getElementById('nurul').checked?0:1000000)-(document.getElementById('pallangga').checked?0:1000000)+(document.getElementById('kamis').checked?1000000:0);document.getElementById('simResult').textContent=rupiah(n);document.getElementById('simNote').textContent='Sisa setelah seluruh alokasi: '+rupiah(n-plan())};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.page).classList.add('active')});
+function excelDate(v){if(v instanceof Date)return v.toISOString().slice(0,10);if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}let d=new Date(v);return isNaN(d)?'':new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+document.getElementById('previewImport').onclick=async()=>{let file=document.getElementById('excelFile').files[0];if(!file){alert('Pilih file Excel terlebih dahulu.');return;}if(!window.XLSX){alert('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang.');return;}try{let buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});let req=['Pemasukan','Pengeluaran','Transaksi'];let missing=req.filter(n=>!wb.SheetNames.includes(n));if(missing.length)throw Error('Sheet tidak ditemukan: '+missing.join(', '));let ir=XLSX.utils.sheet_to_json(wb.Sheets.Pemasukan,{header:1,defval:null}),er=XLSX.utils.sheet_to_json(wb.Sheets.Pengeluaran,{header:1,defval:null}),tr=XLSX.utils.sheet_to_json(wb.Sheets.Transaksi,{header:1,defval:null});let newInc=[];for(let i=3;i<ir.length;i++){let r=ir[i];if(r[0]&&typeof r[3]==='number'&&String(r[0]).toUpperCase()!=='TOTAL PEMASUKAN')newInc.push({name:String(r[0]),amount:Number(r[3])})}let newExp=[],newBudget={};for(let i=3;i<er.length;i++){let r=er[i];if(!r[0]||typeof r[1]!=='number')continue;let grp=String(r[2]||'');if(grp==='Kebutuhan rutin')newExp.push({name:String(r[0]),amount:Number(r[1])});else if(grp==='Target tabungan')newBudget.save=Number(r[1]);else if(grp.includes('Batas bulanan'))newBudget.fun=Number(r[1]);else if(grp==='Sisihkan tiap bulan')newBudget.reserve=Number(r[1]);else if(grp==='Tabungan tambahan')newBudget.extra=Number(r[1]);}let newTx=[];for(let i=4;i<tr.length;i++){let r=tr[i],date=excelDate(r[0]),kind=String(r[1]||'');if(!date||!['Pemasukan','Pengeluaran'].includes(kind))continue;let amount=kind==='Pemasukan'?Number(r[4]||0):Number(r[5]||0);if(amount<=0)continue;newTx.push({id:'import-'+i+'-'+date,date,type:kind==='Pemasukan'?'in':'out',category:String(r[2]||''),desc:String(r[3]||r[2]||''),amount,source:'excel'});}pending={incomes:newInc,expenses:newExp,budget:newBudget,transactions:newTx};let oldKeys=new Set(tx.map(keyTx)),added=newTx.filter(t=>!oldKeys.has(keyTx(t))).length;document.getElementById('importPreview').innerHTML=`<div class="notice"><b>Pratinjau siap.</b><br>Pemasukan: ${newInc.length} sumber, total ${rupiah(sum(newInc))}.<br>Kebutuhan rutin: ${newExp.length} pos, total ${rupiah(sum(newExp))}.<br>Transaksi dalam Excel: ${newTx.length}.<br>Transaksi baru yang akan ditambahkan: ${added}.<br>Alokasi: ${rupiah(Object.values(newBudget).reduce((a,b)=>a+b,0))}.</div>`;document.getElementById('confirmImport').style.display='block';}catch(e){alert('Gagal membaca Excel: '+e.message)}};
+document.getElementById('confirmImport').onclick=()=>{if(!pending)return;incomes=pending.incomes;expenses=pending.expenses;budget={...budget,...pending.budget};let keys=new Set(tx.map(keyTx)),added=0;pending.transactions.forEach(t=>{let k=keyTx(t);if(!keys.has(k)){tx.push(t);keys.add(k);added++}});saveAll();render();document.getElementById('importPreview').innerHTML=`<div class="notice"><b>Impor berhasil.</b><br>${added} transaksi baru ditambahkan. Data lama yang sama tidak diduplikasi.</div>`;document.getElementById('confirmImport').style.display='none';pending=null;alert('Data Excel berhasil diperbarui.');};
 render();
-</script>
-</body>
-</html>
+</script></body></html>
